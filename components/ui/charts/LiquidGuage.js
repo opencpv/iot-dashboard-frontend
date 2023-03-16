@@ -1,6 +1,6 @@
 import { color } from "d3-color";
 import { interpolateRgb } from "d3-interpolate";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import LiquidFillGauge from "react-liquid-gauge";
 
 const LiquidGuage = memo(({ data, properties }) => {
@@ -10,6 +10,8 @@ const LiquidGuage = memo(({ data, properties }) => {
   const radius = 100;
   const interpolate = interpolateRgb(startColor, endColor);
   const fillColor = properties.color;
+
+  useEffect(() => {}, [data[properties.attribute]]);
 
   const gradientStops = [
     {
@@ -33,7 +35,7 @@ const LiquidGuage = memo(({ data, properties }) => {
   ];
 
   return (
-    <div className="border-2 border-white px-8 h-fit  rounded-md py-4">
+    <div className=" px-8 h-fit  rounded-md py-4">
       <p className="text-center w-[200px] inline text-sm text-white font-mono">
         {properties.title}
       </p>
@@ -87,9 +89,6 @@ const LiquidGuage = memo(({ data, properties }) => {
         waveTextStyle={{
           fill: color("#fff").toString(),
           fontFamily: "Arial",
-        }}
-        onClick={() => {
-          setValue(Math.random() * 100);
         }}
       />
       <div

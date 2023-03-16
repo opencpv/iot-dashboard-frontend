@@ -1,11 +1,13 @@
 import io from "socket.io-client";
 import Footer from "../layout/Footer";
 import DataKeyGrid from "../pageSections/dashboard/DataKeysGrid";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import TelemetryComponentSetup from "../ui/grids/TelemetryComponentSetup";
 import LiquidGuage from "../ui/charts/LiquidGuage";
 import LineGraph from "../ui/charts/LineGraph";
 import CircularGuage1 from "../ui/charts/CIrcularGuage1";
+import TextGuage from "../ui/charts/TextGuage";
+import { UiContext } from "../../lib/contexts/UiContext";
 
 const DashboardView = ({ data, iotElements }) => {
   const SOCKET_SERVER_URL = "http://localhost:8080";
@@ -13,6 +15,7 @@ const DashboardView = ({ data, iotElements }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [telem, setTelem] = useState(null);
   const [elements, setElements] = useState({});
+  const { uiState } = useContext(UiContext);
 
   const layout = [
     { i: "a", x: 0, y: 0, w: 1, h: 2, static: true },
@@ -33,34 +36,23 @@ const DashboardView = ({ data, iotElements }) => {
       attribute: "temperature",
       color: "#fff",
     },
-    {
-      title: "Temperature Sensor 1",
-      uiElement: "lguage",
-      attribute: "temperature",
-      color: "#fff",
-    },
-    {
-      title: "Temperature Sensor 1",
-      uiElement: "lguage",
-      attribute: "temperature",
-      color: "#fff",
-    },
-    {
-      title: "Temperature Sensor 1",
-      uiElement: "lguage",
-      attribute: "temperature",
-      color: "#fff",
-    },
-    {
-      title: "Temperature Sensor 1",
-      uiElement: "lguage",
-      attribute: "temperature",
-      color: "#fff",
-    },
+
     {
       uiElement: "cguage",
       levels: 10,
       id: "guage-1",
+      attribute: "temperature",
+      title: "Temperature sensor",
+      color: "#fff",
+    },
+    {
+      uiElement: "lgraph",
+      attribute: "temperature",
+      title: "Temperature sensor",
+      color: "#fff",
+    },
+    {
+      uiElement: "tguage",
       attribute: "temperature",
       title: "Temperature sensor",
       color: "#fff",
@@ -83,6 +75,8 @@ const DashboardView = ({ data, iotElements }) => {
     });
 
     setSocket(socket_connection);
+    console.log(uiState);
+
     return () => {
       socket_connection.close();
     };
@@ -96,7 +90,7 @@ const DashboardView = ({ data, iotElements }) => {
           <TelemetryComponentSetup iotElements={iotElementsHandler} />
           {telem && (
             <div className="w-full px-8 flex  flex-wrap gap-4">
-              {properties.map((setting, index) => (
+              {uiState.map((setting, index) => (
                 <>
                   {setting.uiElement == "lguage" ? (
                     <LiquidGuage
@@ -106,13 +100,20 @@ const DashboardView = ({ data, iotElements }) => {
                     />
                   ) : null}
                   {setting.uiElement == "cguage" ? (
-                    <CircularGuage1 data={telem} properties={setting} />
+                    <CircularGuage1
+                      data={telem}
+                      properties={setting}
+                      key={index}
+                    />
+                  ) : null}
+                  {setting.uiElement === "lgraph" ? (
+                    <LineGraph data={telem} properties={setting} key={index} />
+                  ) : null}
+                  {setting.uiElement == "tguage" ? (
+                    <TextGuage data={telem} properties={setting} key={index} />
                   ) : null}
                 </>
               ))}
-              <LineGraph data={telem} />
-              <LineGraph />
-              <LiquidGuage data={telem} properties={properties[0]} />
             </div>
           )}
         </div>
