@@ -1,6 +1,8 @@
 import { useState } from "react";
 import IotInput from "../inputs/IoTInput";
 import TextUiForm from "../forms/TextUiForm";
+import GraphUiForm from "../forms/GraphUiForm";
+import LiquidGuageUiForm from "../forms/LiquidGuageUiForm";
 
 const DisplayComponentSelector = ({ setSelectedComponentHandler }) => {
   const [buttonToggle, setButtonToggle] = useState(false);
@@ -36,6 +38,8 @@ const DisplayComponentSelector = ({ setSelectedComponentHandler }) => {
         </div>
       )}
       {selected == "Text" ? <TextUiForm /> : null}
+      {selected == "Graph" ? <GraphUiForm /> : null}
+      {selected == "Liquid Guage" ? <LiquidGuageUiForm /> : null}
     </div>
   );
 };
